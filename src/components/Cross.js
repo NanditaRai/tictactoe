@@ -1,10 +1,10 @@
-import React, { Component } from 'react'
+import React from 'react'
 import {
   StyleSheet,
   View
 } from 'react-native'
 import { PropTypes } from 'prop-types';
-import { BLACK_COLOR } from '../common/color';
+import { GRAY_COLOR } from '../common/color';
 
 const styles = StyleSheet.create({
   container: {
@@ -46,7 +46,7 @@ const Cross = ({ xTranslate, yTranslate, color }) => {
 Cross.defaultProps = {
   xTranslate: 10,
   yTranslate: 10,
-  color: BLACK_COLOR,
+  color: GRAY_COLOR,
 };
 
 Cross.propTypes = {

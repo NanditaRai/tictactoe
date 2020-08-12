@@ -4,6 +4,8 @@ const locale = {
   namePlaceholder: 'Name',
   start: 'Start',
   playAgain: 'Play Again',
+  cancel: 'Cancel',
+  noNameError: 'Please fill the name',
 }
 
 export default locale;

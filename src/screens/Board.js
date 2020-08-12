@@ -17,7 +17,7 @@ import {
   RESULT_COMPUTER,
   RESULT_TIE
 } from '../common/constants'
-import { BLACK_COLOR, PRIMARY_COLOR } from '../common/color';
+import { BLACK_COLOR, PRIMARY_COLOR, GRAY_COLOR } from '../common/color';
 import locale from '../common/locale-en';
 
 const styles = StyleSheet.create({
@@ -34,17 +34,12 @@ const styles = StyleSheet.create({
   },
   line: {
     position: 'absolute',
-    width: 3,
-    height: 306,
     backgroundColor: BLACK_COLOR,
-    transform: [
-      {translateX: 100}
-    ]
   }
 });
 
 const Board = ({navigation}) => {
-  const {playAgain} = locale;
+  const {playAgain, cancel} = locale;
 
   const [round, updateRound] = useState(0);
   const [computerInputs, updateComputerInputs] = useState([]);
@@ -52,13 +47,20 @@ const Board = ({navigation}) => {
   const [result, updateResult] = useState(RESULT_NONE);
   const [isModalOpen, showModal] = useState(false);
   const [lastStepUser, updateLastStepUser] = useState(false);
+  const [winningArray, updateWinningArray] = useState([]);
 
   useEffect(() => {
     restart();
   }, [])
 
   const isWinner = inputs => {
-    return WINNING_CONDITIONS.some(d => d.every(item => inputs.indexOf(item) !== -1))
+    return WINNING_CONDITIONS.some((d, index) => {
+      let res = d.every(item => inputs.indexOf(item) !== -1);
+      if(res) {
+        updateWinningArray(d);
+      }
+      return res;
+    })
   }
 
   const getResults = () => {
@@ -135,6 +137,7 @@ const Board = ({navigation}) => {
     updateComputerInputs([]);
     updateResult(RESULT_NONE);
     updateUserInputs([]);
+    updateWinningArray([]);
 
     setTimeout(() => {
       if (round % 2 === 0) {
@@ -150,7 +153,7 @@ const Board = ({navigation}) => {
       case RESULT_COMPUTER:
         return 'Computer won the game!'
       case RESULT_TIE:
-        return 'Tie!'
+        return 'Its a Tie!'
       default:
         return ''
     }
@@ -158,7 +161,11 @@ const Board = ({navigation}) => {
 
   const dismissModal = () => {
     showModal(false);
-    navigation.navigate('Menu');
+  }
+
+  const onPlayAgainClick = () => {
+    dismissModal();
+    restart();
   }
 
     return (
@@ -166,7 +173,13 @@ const Board = ({navigation}) => {
         <TouchableWithoutFeedback onPress={e => boardClickHandler(e)}>
           <View style={styles.board}>
             <View
-              style={styles.line}
+              style={[styles.line, {
+                width: 3,
+                height: 306,
+                transform: [
+                  {translateX: 100}
+                ]
+              }]}
             />
             <View
               style={[styles.line, {
@@ -201,7 +214,7 @@ const Board = ({navigation}) => {
                   key={i}
                   xTranslate={CENTER_POINTS[d].x}
                   yTranslate={CENTER_POINTS[d].y}
-                  color={PRIMARY_COLOR}
+                  color={winningArray.includes(d) ? PRIMARY_COLOR : BLACK_COLOR}
                 />
               ))
             }
@@ -211,7 +224,7 @@ const Board = ({navigation}) => {
                   key={i}
                   xTranslate={CENTER_POINTS[d].x}
                   yTranslate={CENTER_POINTS[d].y}
-                  color={BLACK_COLOR}
+                  color={winningArray.includes(d) ? PRIMARY_COLOR : GRAY_COLOR}
                 />
               ))
             }
@@ -222,8 +235,10 @@ const Board = ({navigation}) => {
             transparent
             visible={isModalOpen}
             title={getModalTitle()}
-            buttonText={playAgain}
-            buttonClick={dismissModal}
+            leftButtonText={cancel}
+            leftButtonClick={dismissModal}
+            rightButtonText={playAgain}
+            rightButtonClick={onPlayAgainClick}
           />
       </View>
     )

@@ -12,7 +12,6 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     color: WHITE_COLOR,
-    fontFamily: 'NunitoSans-Light',
   }
 });
 
